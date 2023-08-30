@@ -2,23 +2,26 @@ const Job = require('../models/Job')
 const {StatusCodes} = require('http-status-codes')
 const {BadRequestError, UnauthenticatedError} = require('../errors')
 
-const getAllJobs = (req,res)=>{
-    res.send('Get All Jobs')
+const getAllJobs = async (req,res)=>{
+    const jobs = await Job.find({createdBy:req.user.userId}).sort('createdAt')
+    res.status(StatusCodes.OK).json({jobs, count:jobs.length})
 }
 
-const getJob = (req,res)=>{
+const getJob = async (req,res)=>{
     res.send('Get Job')
 }
 
-const createJob = (req,res)=>{
-    res.json(req.body)
+const createJob = async (req,res)=>{
+    req.body.createdBy = req.user.userId
+    const job = await Job.create(req.body)
+    res.status(StatusCodes.CREATED).json({job})
 }
 
-const updateJob = (req,res)=>{
+const updateJob = async (req,res)=>{
     res.send('Update Job')
 }
 
-const deleteJob = (req,res)=>{
+const deleteJob = async (req,res)=>{
     res.send('Delete Job')
 }
 
